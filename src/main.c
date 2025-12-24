@@ -165,15 +165,18 @@ keypress(XEvent *e)
         camera.velocity.x += config.key_move_speed;
         break;
     case XK_minus:
+    case XK_J:
         scroll_down(1, ev->state & ControlMask);
         break;
     case XK_equal:
+    case XK_K:
         scroll_up(1, ev->state & ControlMask);
         break;
     case XK_q:
     case XK_Escape:
         running = false;
         break;
+    case XK_g:
     case XK_0:
         camera.scale = 1.0f;
         camera.delta_scale = 0.0f;
@@ -184,6 +187,12 @@ keypress(XEvent *e)
         break;
     case XK_f:
         flashlight.is_enabled = !flashlight.is_enabled;
+        break;
+    case XK_H:
+        scroll_down(1, true);
+        break;
+    case XK_L:
+        scroll_up(1, true);
         break;
     }
 }
