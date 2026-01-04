@@ -20,16 +20,15 @@
 #include "navigation.h"
 #include "util.h"
 #include "vec.h"
+#include "screenshot.h"
 
 #define MIN_GLX_MAJOR   1
 #define MIN_GLX_MINOR   3
 
 GLuint load_shader(const char *, GLenum);
-XImage* get_screenshot();
 void button_press(XEvent *);
 void button_release(XEvent *);
 void check_glx_version(Display *);
-void destroy_screenshot(XImage*);
 void draw_image(Camera *, XImage *, GLuint, GLuint, Vec2f, Mouse *, Flashlight *);
 void keypress(XEvent *);
 void motion_notify(XEvent *);
@@ -97,25 +96,6 @@ check_glx_version(Display *dpy)
         || (glx_minor == MIN_GLX_MAJOR && glx_minor < MIN_GLX_MINOR)
         || (MIN_GLX_MAJOR < 1))
         die("Invalid GLX version %d.%d. Requires GLX >= %d.%d", glx_major, glx_minor, MIN_GLX_MAJOR, MIN_GLX_MINOR);
-}
-
-// TODO: implement support for the MIT shared memory extension. (MIT-SHM)
-XImage*
-get_screenshot()
-{
-    return XGetImage(
-        dpy, w,
-        0, 0,
-        wa.width,
-        wa.height,
-        AllPlanes,
-        ZPixmap);
-}
-
-void
-destroy_screenshot(XImage *screenshot)
-{
-    XDestroyImage(screenshot);
 }
 
 void
@@ -376,7 +356,7 @@ main(int argc, char *argv[])
         die("Error whilst linking program:\n%s", info_log);
     }
 
-    XImage *screenshot = get_screenshot();
+    XImage *screenshot = newScreenshot(dpy, DefaultRootWindow(dpy)).image;
     Vec2f screenshot_size = (Vec2f) {screenshot->width, screenshot->height};
 
     int sw = screenshot_size.x;
@@ -464,7 +444,7 @@ main(int argc, char *argv[])
     };
 
     camera = (Camera) {
-        .position = ZERO,
+        .position = ZERO, // TODO: implement getCursorPosition
         .velocity = ZERO,
         .scale_pivot = ZERO,
         .scale = 1.0f,

@@ -2,6 +2,10 @@ CC=gcc
 CFLAGS=-Wall -ggdb -Wextra -pedantic -O3
 LDFLAGS=-lX11 -lGL -lGLEW -lm -lXrandr
 
+# With MIT-SHM support
+CFLAGS += -DMITSHM
+LDFLAGS += -lXext
+
 SRC=$(wildcard src/*.c)
 INCLUDES=-I.
 OBJ=$(SRC:.c=.o)
