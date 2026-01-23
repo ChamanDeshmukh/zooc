@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <time.h>
+#include <assert.h>
 
 #include <X11/X.h>
 #include <X11/extensions/Xrandr.h>
@@ -52,6 +54,8 @@ static void (*handler[LASTEvent]) (XEvent *) = {
     [ButtonPress] = button_press,
     [ButtonRelease] = button_release,
 };
+
+XImage *screenshot = {0};
 
 GLuint
 load_shader(const char *name, GLenum type)
@@ -173,6 +177,29 @@ keypress(XEvent *e)
         break;
     case XK_L:
         scroll_up(1, true);
+        break;
+    case XK_s:
+        char *file_path = NULL;
+        char timestamp[20];
+        strftime(timestamp, sizeof(timestamp), "%Y%m%d_%H%M%S", localtime(&(time_t){time(NULL)}));
+
+        if (strcmp(config.screenshot_path, getenv("HOME")) != 0) {
+            file_path = malloc(strlen(getenv("HOME")) + strlen("/") +
+                               strlen(config.screenshot_path) +
+                               strlen("/zooc_screenshot_") +
+                               strlen(timestamp) + strlen(".ppm") + 1);
+
+            sprintf(file_path, "%s/%s/zooc_screenshot_%s.ppm", getenv("HOME"), config.screenshot_path, timestamp);
+        } else {
+            file_path = malloc(strlen("/") +
+                               strlen(config.screenshot_path) +
+                               strlen("/zooc_screenshot_") +
+                               strlen(timestamp) + strlen(".ppm") + 1);
+
+            sprintf(file_path, "%s/zooc_screenshot_%s.ppm", config.screenshot_path, timestamp);
+        }
+        save_to_ppm(screenshot, file_path);
+        free(file_path);
         break;
     }
 }
@@ -356,7 +383,7 @@ main(int argc, char *argv[])
         die("Error whilst linking program:\n%s", info_log);
     }
 
-    XImage *screenshot = newScreenshot(dpy, DefaultRootWindow(dpy)).image;
+    screenshot = new_screenshot(dpy, DefaultRootWindow(dpy)).image;
     Vec2f screenshot_size = (Vec2f) {screenshot->width, screenshot->height};
 
     int sw = screenshot_size.x;
