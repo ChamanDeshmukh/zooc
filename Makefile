@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -ggdb -Wextra -pedantic -O3
+CFLAGS=-Wall -Wextra -pedantic -O3
 LDFLAGS=-lX11 -lGL -lGLEW -lm -lXrandr
 
 # With MIT-SHM support
