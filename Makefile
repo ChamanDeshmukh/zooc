@@ -1,13 +1,13 @@
-CC=gcc
+CC=cc
 CFLAGS=-Wall -Wextra -pedantic -O3
-LDFLAGS=-lX11 -lGL -lGLEW -lm -lXrandr
+LDFLAGS=-L/usr/local/lib -lX11 -lGL -lGLEW -lm -lXrandr
 
 # With MIT-SHM support
 CFLAGS += -DMITSHM
 LDFLAGS += -lXext
 
 SRC=$(wildcard src/*.c)
-INCLUDES=-I.
+INCLUDES=-I/usr/local/include -I.
 OBJ=$(SRC:.c=.o)
 
 CONFIG_FILES=$(wildcard *.glsl) $(wildcard *.conf)
