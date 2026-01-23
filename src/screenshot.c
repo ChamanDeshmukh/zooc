@@ -59,7 +59,7 @@ static inline long syscall_shmdt(const void *shmaddr) {
 }
 #endif
 
-Screenshot newScreenshot(Display *display, Window window) {
+Screenshot new_screenshot(Display *display, Window window) {
     Screenshot result = {0};
     XWindowAttributes attributes;
     
@@ -159,7 +159,7 @@ Screenshot newScreenshot(Display *display, Window window) {
     return result;
 }
 
-void destroyScreenshot(Screenshot screenshot, Display *display) {
+void destroy_screenshot(Screenshot screenshot, Display *display) {
     if (!screenshot.image) return;
     
 #ifdef MITSHM
@@ -180,9 +180,9 @@ void destroyScreenshot(Screenshot screenshot, Display *display) {
 #endif
 }
 
-void refreshScreenshot(Screenshot *screenshot, Display *display, Window window) {
+void refresh_screenshot(Screenshot *screenshot, Display *display, Window window) {
     if (!screenshot || !screenshot->image) {
-        *screenshot = newScreenshot(display, window);
+        *screenshot = new_screenshot(display, window);
         return;
     }
     
@@ -196,8 +196,8 @@ void refreshScreenshot(Screenshot *screenshot, Display *display, Window window) 
     if (!XShmGetImage(display, window, screenshot->image, 0, 0, AllPlanes) ||
         attributes.width != screenshot->image->width ||
         attributes.height != screenshot->image->height) {
-        destroyScreenshot(*screenshot, display);
-        *screenshot = newScreenshot(display, window);
+        destroy_screenshot(*screenshot, display);
+        *screenshot = new_screenshot(display, window);
     }
 #else
     XImage *refreshedImage = XGetSubImage(
@@ -247,7 +247,7 @@ void refreshScreenshot(Screenshot *screenshot, Display *display, Window window) 
 #endif
 }
 
-void saveToPPM(XImage *image, const char *filePath) {
+void save_to_ppm(XImage *image, const char *filePath) {
     if (!image || !image->data) {
         fprintf(stderr, "Invalid image for saving\n");
         return;

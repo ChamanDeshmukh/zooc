@@ -15,10 +15,10 @@ typedef struct Screenshot {
 #endif
 } Screenshot;
 
-Screenshot newScreenshot(Display *display, Window window);
-void destroyScreenshot(Screenshot screenshot, Display *display);
-void refreshScreenshot(Screenshot *screenshot, Display *display, Window window);
-void saveToPPM(XImage *image, const char *filePath);
-void cleanupScreenshot(Screenshot *screenshot);
+Screenshot new_screenshot(Display *display, Window window);
+void destroy_screenshot(Screenshot screenshot, Display *display);
+void refresh_screenshot(Screenshot *screenshot, Display *display, Window window);
+void save_to_ppm(XImage *image, const char *filePath);
+void cleanup_screenshot(Screenshot *screenshot);
 
 #endif /* SCREENSHOT_H */
